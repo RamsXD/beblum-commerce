@@ -2,7 +2,7 @@ import { ProductType } from "../types/ProductType";
 import Product from "./components/Product";
 
 async function fetchProducts() {
-  const res = await fetch("https://fakestoreapi.com/products");
+  const res = await fetch("https://dummyjson.com/products");
   if (!res.ok) {
     throw new Error("Failed to fetch products");
   }
@@ -10,7 +10,8 @@ async function fetchProducts() {
 }
 
 export default async function Home() {
-  const products = await fetchProducts();
+  const data = await fetchProducts();
+  const products: ProductType[] = data.products;
   console.log(products);
   return (
     <div className="max-w- mx-auto pt-8 px-8">
