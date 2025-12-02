@@ -10,11 +10,18 @@ type ProductImageProps = {
 
 export default function ProductImage({ product, fill }: ProductImageProps) {
   const [loading, setLoading] = useState(true);
+
+  const altText = product.name || "Imagem do produto";
+
+  const classNames = `object-cover ${
+    loading ? "scale-110 blur-3xl grayscale" : "scale-100 blur-0 grayscale-0"
+  }`;
+
   return fill ? (
     <Image
-      src={product.thumbnail || "/fallback.png"}
+      src={product.image || "/fallback.png"}
       fill
-      alt={product.title}
+      alt={altText}
       className={`obeject-cover ${
         loading
           ? "scale-110 blur-3xl grayscale"
@@ -24,11 +31,11 @@ export default function ProductImage({ product, fill }: ProductImageProps) {
     />
   ) : (
     <Image
-      src={product.thumbnail}
+      src={product.image || "/fallback.png"}
       width={400}
       height={700}
-      alt={product.title}
-      className={`obeject-cover ${
+      alt={altText}
+      className={`object-cover ${
         loading
           ? "scale-110 blur-3xl grayscale"
           : "scale-100 blur-0 grayscale-0"

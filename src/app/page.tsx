@@ -1,22 +1,37 @@
 import { ProductType } from "../types/ProductType";
 import Product from "./components/Product";
+import Stripe from "stripe";
 
-async function fetchProducts() {
-  const res = await fetch("https://dummyjson.com/products");
-  if (!res.ok) {
-    throw new Error("Failed to fetch products");
-  }
-  return res.json();
+async function getProducts(): Promise<ProductType[]> {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {});
+
+  const products = await stripe.products.list();
+
+  const formattedProducts = await Promise.all(
+    products.data.map(async (product) => {
+      const price = await stripe.prices.list({
+        product: product.id,
+      });
+      return {
+        id: product.id,
+        price: price.data[0].unit_amount,
+        name: product.name,
+        image: product.images[0],
+        description: product.description,
+        currency: price.data[0].currency,
+      };
+    })
+  );
+  return formattedProducts;
 }
 
 export default async function Home() {
-  const data = await fetchProducts();
-  const products: ProductType[] = data.products;
+  const products = await getProducts();
   console.log(products);
   return (
     <div className="max-w- mx-auto pt-8 px-8">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-10 xl:gap-6">
-        {products.map((product: ProductType) => (
+        {products.map((product) => (
           <Product key={product.id} product={product}></Product>
         ))}
       </div>
