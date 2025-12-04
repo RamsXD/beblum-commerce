@@ -35,7 +35,6 @@ export default async function Home() {
           <Product key={product.id} product={product}></Product>
         ))}
       </div>
-      <h1>beblum</h1>
     </div>
   );
 }
