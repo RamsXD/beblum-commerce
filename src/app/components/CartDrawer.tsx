@@ -1,9 +1,14 @@
 import { formatPrice } from "@/src/lib/utils";
 import { useCartStore } from "@/src/store";
 import Image from "next/image";
+import CheckoutButton from "./CheckoutButton";
 
 export default function CartDrawer() {
   const useStore = useCartStore();
+
+  const totalPrice = useStore.cart.reduce((acc, item) => {
+    return acc + item.price! * (item.quantity ?? 0);
+  }, 0);
   return (
     <div
       onClick={() => useStore.toggleCart()}
@@ -42,12 +47,19 @@ export default function CartDrawer() {
               >
                 Adicionar
               </button>
-              <button onClick={() => useStore.removeProduct(item)} className="py-1 px-2 border rounded-md mt-2 text-sm">
+              <button
+                onClick={() => useStore.removeProduct(item)}
+                className="py-1 px-2 border rounded-md mt-2 text-sm"
+              >
                 Remover
               </button>
             </div>
           </div>
         ))}
+
+        {useStore.cart.length > 0 && useStore.onCheckout === "cart" && (
+          <CheckoutButton totalPrice={totalPrice} />
+        )}
       </div>
     </div>
   );
